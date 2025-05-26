@@ -2,36 +2,138 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Créer une organisation</title>
+  <title>Créer une organisation Zendesk</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    h2 {
+      color: #333;
+    }
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #0073e6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005bb5;
+    }
+    #status {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <h2>Nouvelle organisation</h2>
+  <h2>Créer une organisation Zendesk</h2>
   <form id="orgForm">
-    <label>Nom : <input type="text" id="name" required /></label><br><br>
-    <label>Domaine : <input type="text" id="domain" /></label><br><br>
-    <button type="submit">Créer</button>
+    <label>Nom *</label>
+    <input type="text" id="name" required />
+
+    <label>Domaine (ex: sergic.com)</label>
+    <input type="text" id="domain" />
+
+    <label>Email</label>
+    <input type="email" id="email" />
+
+    <label>Téléphone</label>
+    <input type="text" id="telephone" />
+
+    <label>Code partenaire</label>
+    <input type="text" id="code_partenaire" />
+
+    <label>Univers</label>
+    <select id="univers">
+      <option value="">-- Choisir --</option>
+      <option value="immobilier">Immobilier</option>
+      <option value="automobile">Automobile</option>
+      <option value="nautisme">Nautisme</option>
+      <option value="retail">Retail</option>
+    </select>
+
+    <label>Fiche technique</label>
+    <input type="url" id="fiche_technique" />
+
+    <label>Fiche Sugar</label>
+    <input type="url" id="fiche_sugar" />
+
+    <label>Adresse</label>
+    <textarea id="adresse" rows="3"></textarea>
+
+    <button type="submit">Créer l’organisation</button>
   </form>
 
-  <p id="status"></p>
+  <div id="status"></div>
 
   <script>
     document.getElementById('orgForm').addEventListener('submit', async function(e) {
       e.preventDefault();
+
       const name = document.getElementById('name').value;
       const domain = document.getElementById('domain').value;
+      const email = document.getElementById('email').value;
+      const telephone = document.getElementById('telephone').value;
+      const code_partenaire = document.getElementById('code_partenaire').value;
+      const univers = document.getElementById('univers').value;
+      const fiche_technique = document.getElementById('fiche_technique').value;
+      const fiche_sugar = document.getElementById('fiche_sugar').value;
+      const adresse = document.getElementById('adresse').value;
+
       const status = document.getElementById('status');
+      status.textContent = "Création en cours...";
+
+      const body = {
+        name,
+        domain_names: domain ? [domain] : [],
+        organization_fields: {
+          email,
+          telephone,
+          code_partenaire,
+          univers,
+          fiche_technique,
+          fiche_sugar,
+          adresse
+        }
+      };
 
       try {
         const response = await fetch('https://n8n.ubiflow.net/webhook/create-org', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ name, domain })
+          body: JSON.stringify(body)
         });
 
         if (response.ok) {
           status.textContent = "✅ Organisation créée avec succès !";
         } else {
-          status.textContent = "❌ Erreur lors de la création.";
+          const error = await response.text();
+          status.textContent = "❌ Erreur : " + error;
         }
       } catch (err) {
         status.textContent = "❌ Problème de connexion.";
