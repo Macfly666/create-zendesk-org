@@ -3,47 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <title>Créer une organisation Zendesk</title>
+  <link rel="icon" href="android-chrome-192x192.png" />
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f4f6f8;
-      padding: 20px;
+      padding: 30px;
       max-width: 800px;
       margin: auto;
     }
-    h2 {
-      color: #333;
+
+    header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
     }
+
+    header img {
+      width: 40px;
+      height: 40px;
+      margin-right: 15px;
+    }
+
+    h2 {
+      color: #255662;
+      margin: 0;
+    }
+
     form {
       background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
+
     label {
       display: block;
       margin-top: 15px;
       font-weight: bold;
+      color: #255662;
     }
+
     input, textarea, select {
       width: 100%;
-      padding: 8px;
+      padding: 10px;
       margin-top: 5px;
-      border-radius: 4px;
+      border-radius: 5px;
       border: 1px solid #ccc;
+      font-size: 14px;
     }
+
     button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background-color: #0073e6;
+      margin-top: 25px;
+      padding: 12px 25px;
+      background-color: #255662;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 5px;
+      font-size: 16px;
       cursor: pointer;
     }
+
     button:hover {
-      background-color: #005bb5;
+      background-color: #1d4450;
     }
+
     #status {
       margin-top: 20px;
       font-weight: bold;
@@ -51,7 +75,12 @@
   </style>
 </head>
 <body>
-  <h2>Créer une organisation Zendesk</h2>
+
+  <header>
+    <img src="android-chrome-192x192.png" alt="Ubiflow Logo">
+    <h2>Créer une organisation Zendesk</h2>
+  </header>
+
   <form id="orgForm">
     <label>Nom *</label>
     <input type="text" id="name" required />
@@ -92,7 +121,8 @@
   <div id="status"></div>
 
   <script>
-    document.getElementById('orgForm').addEventListener('submit', async function(e) {
+    const form = document.getElementById('orgForm');
+    form.addEventListener('submit', async function(e) {
       e.preventDefault();
 
       const name = document.getElementById('name').value;
@@ -131,6 +161,7 @@
 
         if (response.ok) {
           status.textContent = "✅ Organisation créée avec succès !";
+          form.reset(); // Vider les champs après succès
         } else {
           const error = await response.text();
           status.textContent = "❌ Erreur : " + error;
